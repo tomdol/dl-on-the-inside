@@ -1,0 +1,444 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Deep Learning on the inside</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/reveal.css" />
+    <link rel="stylesheet" href="night.css">
+    <link rel="stylesheet" href="tuning.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/plugin/highlight/monokai.min.css" 
+        integrity="sha512-z8wQkuDRFwCBfoj7KOiu1MECaRVoXx6rZQWL21x0BsVVH7JkqCp1Otf39qve6CrCycOOL5o9vgfII5Smds23rg==" 
+        crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+        integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+        crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Titillium+Web:200,300&amp;subset=latin-ext" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css?family=Fira+Code" rel="stylesheet"> 
+</head>
+<body>
+<div class="reveal">
+    <div class="slides">
+        <section>
+            <br><br>
+            <img src="img/ngraph.png" style="width: 38%">
+            <h3 style="margin-bottom: .5rem !important; letter-spacing: .25rem;">DEEP LEARNING</h3>
+            <hr style="width: 50%">
+            <h4 style="letter-spacing: .7rem;">on the inside</h4>
+            <br>
+            <div class="accent small">
+                <i class="fas fa-user white"></i>&nbsp;&nbsp;Tomasz Dołbniak &nbsp;&nbsp;&nbsp;&nbsp;
+                <i class="fas fa-microphone white"></i>&nbsp;&nbsp;/ event /&nbsp;&nbsp;&nbsp;&nbsp;
+                <i class="fas fa-map-marker-alt white"></i>&nbsp;&nbsp;/ location / year /
+            </div>
+        </section>
+        <section data-transition="fade-out">
+            <img src="img/intel-ai-1.svg" style="width: 30%">
+            <br><br>
+            <div class="fragment fade-up">
+                <div style="display: flex; justify-content: space-between">
+                    <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                        <img src="img/ngraph.png" style="width: 14rem">
+                        <span>nGraph</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                        <img src="img/onnx.png" style="width: 10rem">
+                        <span>ONNX</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                        <img src="img/openvino-square.png" style="width: 9rem">
+                        <span>OpenVINO</span>                            
+                    </div>
+                    <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                        <img src="img/ONNX_Runtime_logo_dark.png" style="width: 10rem">
+                        <span>ONNXRuntime</span>                            
+                    </div>
+                </div>
+            </div>
+            <br><br>
+            <span class="fragment fade-up">
+                <a href="https://www.linkedin.com/in/tomdol"><i class="fab fa-linkedin"></i> tomdol</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="https://github.com/tomdol"><i class="fab fa-github-square"></i> tomdol</a><br><br>
+            </span>
+        </section>
+        <section>
+            <section>
+                <h3>Artificial neural networks</h3>
+                <img src="img/ann.png" style="width: 75%">
+            </section>
+            <section>
+                <h3>Real-life models</h3>
+                <img src="img/real_model.png" style="width: 100%">
+                <span class="vsmall src"><br>(fragment of the <a href="https://arxiv.org/abs/1506.01497">Faster R-CNN</a> model)</span>
+            </section>
+            <section>
+                <h3>Graph representations</h3>
+                <div class="row">
+                    <img src="img/model_node.png" style="width: 65%">
+                    <img src="img/ann.png" style="width: 55%">
+                </div>
+                <ul class="small">
+                    <li class="fragment"><span class="accent">nodes: </span>operations <i class="accent">vs</i> individual neurons</li>
+                    <li class="fragment"><span class="accent">edges: </span>tensors <i class="accent">vs</i> individual weights</li>
+                    <li class="fragment"><span class="accent">graph: </span>computational graph <i class="accent">vs</i> linear graph with layers</li>
+                </ul>
+            </section>
+            <section>
+                <h3>Model as a function</h3>
+                <div class="row">
+                    <img src="img/Hapsik.jpg" style="width: 15rem">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="fira">-></span>&nbsp;&nbsp;&nbsp;
+                    <img src="img/mini_model.png" style="width: 25%">&nbsp;&nbsp;&nbsp;
+                    <span class="fira">-></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="accent big">DOG</span>
+                </div>
+                <div class="row f-start">
+                    <div class="fragment fade-up fira big accent">$$y = f(x)$$</div>
+                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                    <div class="column f-start">
+                        <span class="fragment fade-up fira green">1 => DOG</span>
+                        <span class="fragment fade-up fira red">0 => NOT A DOG</span>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <h3>Model as a function</h3>
+                <div class="row" style="justify-content: center">
+                    <img src="img/Hapsik_uszy.jpg" style="width: 17rem">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="fira">-></span>&nbsp;&nbsp;&nbsp;
+                    <img src="img/mini_model.png" style="width: 25%">&nbsp;&nbsp;&nbsp;
+                    <span class="fira">-></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="fragment fade-up big accent">WTF?</span>
+                </div>
+                <div class="fragment fade-up">
+                    <h3 class="accent">model = approximation of a function</h3>
+                    <h4>with a certain accuracy</h4>
+                </div>
+            </section>
+            <section>
+                <h3>Universal approximation theorem</h3>
+                <br>
+                <p><i>Universal approximation theorems imply that neural networks can represent a wide variety of interesting functions when given appropriate weights.</i></p>
+                <br>
+                <a href="https://en.wikipedia.org/wiki/Universal_approximation_theorem">en.wikipedia.org/wiki/Universal_approximation_theorem</a>
+            </section>
+            <section>
+                <h3>Deep Learning model</h3>
+                <h4 class="accent">from a C++ developer's perspective</h4>
+                <pre class="double fragment">
+                    <code data-trim data-noescape>
+                        template &lt;float A, float B&gt;
+                        float linear_function(const float x) 
+                        {
+                            return A * x + B;
+                        }
+                    </code>
+                </pre>
+                <span class="fragment">a generator of a certain class of functions</span>
+            </section>
+            <section>
+                <h3>Deep Learning model</h3>
+                <h4 class="accent">from a <i>generic</i> developer's perspective</h4>
+                <div class="fragment">
+                    <div class="small">$$f(x) = Gemm(Flatten(GlobalAveragePool(Relu(BatchNormalization(Conv(x))))))$$</div>
+                    <img src="img/resnet_function.png" style="width: 18%">
+                </div>
+            </section>
+            <section>
+                <div class="row medium">
+                    <span>model</span>
+                    <div class="fira small">&nbsp;&nbsp;->&nbsp;&nbsp;</div>
+                    <span>function</span>
+                    <div class="fira small">&nbsp;&nbsp;->&nbsp;&nbsp;</div>
+                    <span>graph</span>
+                </div>
+                <br>
+                <div class="accent medium">$$f(x) = ax + b$$</div>
+                <br>
+                <img src="img/ax_plus_b.png" class="fragment fade-up">
+            </section>
+            <section>
+                <img src="img/netron.png" style="width: 40%" class="m0">
+                <img src="img/netron_github.png" style="width: 80%;" class="m0">
+                <br>
+                <a href="https://github.com/lutzroeder/netron" class="fira"><i class="fab fa-github-square"></i> lutzroeder/netron</a>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h3>Grafy w DL</h3>
+                <img src="img/nGraph_diagram.png">
+            </section>
+            <section>
+                <h3>"Obliczenie" funkcji - inferencja</h3>
+                <img src="img/netron_github.png" style="width: 90%">
+            </section>
+            <section>
+                <h3>Implementacja naiwna</h3>
+                <ul class="loose">
+                    <li>implementacja operatorów</li>
+                    <li>sekwencyjne wykonanie operacji</li>
+                    <li class="fragment fade-up">Nie wykorzystuje możliwości HW</li>
+                    <li class="fragment fade-up">Jednostki obliczeniowe (rdzenie)</li>
+                    <li class="fragment fade-up">Wektoryzacja</li>
+                    <li class="fragment fade-up">Data layout</li>
+                </ul>
+            </section>
+            <section>
+                <h3>Kernele</h3>
+                <ul class="loose">
+                    <li>Jedna z podstawowych optymalizacji</li>
+                    <li class="fragment fade-up">Ściśle powiązane ze sprzętem</li>
+                    <li class="fragment fade-up">Architektura & instrukcje</li>
+                    <li class="fragment fade-up">Typ danych, reprezentacja danych, rank</li>
+                    <li class="fragment fade-up">DNNL - Intel CPU & GPU</li>
+                </ul>
+                <br><br>
+                <div class="fragment fade-up"><a href="https://github.com/intel/mkl-dnn"><i class="fab fa-github-square"></i> intel/mkl-dnn</a></div>
+            </section>
+            <section>
+                <h3>Direct optimization</h3>
+                <span class="fira">model -> graf -> kernele -> HW</span>
+                <br><br>
+                <div class="row fragment fade-up">
+                    <ul style="align-self: flex-start;">
+                        <li>Apache MXNet</li>
+                        <li>BigDL</li>
+                        <li>Caffe Optimized for Intel Architecture</li>
+                        <li>Chainer</li>
+                        <li>DeepLearning4J</li>
+                        <li class="accent">Intel Nervana nGraph</li>
+                        <li>MATLAB DL Toolbox</li>
+                    </ul>
+                    <ul style="align-self: flex-start;">
+                        <li>Menoh</li>
+                        <li>Microsoft Cognitive Toolkit (CNTK)</li>
+                        <li class="accent">ONNX Runtime</li>
+                        <li class="accent">OpenVINO(TM) toolkit</li>
+                        <li class="accent">PaddlePaddle</li>
+                        <li>PyTorch</li>
+                        <li class="accent">Tensorflow</li>
+                    </ul>
+                </div>
+            </section>
+        </section>
+        <section data-transition="zoom-in">
+            <section class="loose">
+                <div>
+                    <img src="img/ngraph.png" style="width: 40%">
+                </div>
+                <div>
+                    <a href="https://www.ngraph.ai">www.ngraph.ai</a><br>
+                    <a href="https://github.com/NervanaSystems/ngraph"><i class="fab fa-github-square"></i> NervanaSystems/ngraph</a><br>
+                    <a href="https://pypi.org/project/ngraph-core/">pypi.org/project/ngraph-core</a><br>
+                </div>
+                <div class="fragment fade-up" style="letter-spacing: .5rem;">
+                    <hr style="width: 70%">
+                    <a href="https://github.com/openvinotoolkit/openvino" class="white"><i class="fab fa-github-square"></i> openvinotoolkit/openvino</a>
+                </div>
+            </section>
+            <section>
+                <div><img src="img/ngraph.png" style="width: 25%"></div>
+                <h4>od strony technicznej</h4>
+                <br>
+                <ul class="loose">
+                    <li class="fragment fade-up">biblioteka</li>
+                    <li class="fragment fade-up"><img src="img/cpp_logo.png" class="li-inline" style="height: 2.5rem"> w środku</li>
+                    <li class="fragment fade-up"><img src="img/python_logo.png" class="li-inline" style="height: 2rem"> API w pythonie</li>
+                </ul>
+            </section>
+            <section>
+                <div><img src="img/ngraph.png" style="width: 25%"></div>
+                <h4>funkcjonalnie</h4>
+                <br>
+                <ul class="loose">
+                    <li class="fragment fade-up">kompilator modeli/grafów</li>
+                    <li class="fragment fade-up">optymalizator</li>
+                    <li class="fragment fade-up">akcelerator <span class="fragment accent">- nawet 45x</span></li>
+                    <li class="fragment fade-up">runtime dla modeli DL</li>
+                </ul>
+            </section>
+            <section>
+                <div class="row"><img src="img/ngraph.png" style="height: 4rem"><span>nGraph</span></div>
+                <img src="img/nGraph_diagram.png">
+            </section>
+            <section>
+                <div><img src="img/ngraph.png" style="width: 25%"></div>
+                <ul class="loose">
+                    <li>nGraph nie jest frameworkiem</li>
+                    <li class="fragment fade-up">nie służy do budowania modeli</li>
+                    <li class="fragment fade-up">C++ & python API</li>
+                    <li class="fragment fade-up accent">nGraph - backend / engine</li>
+                </ul>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h3>Dlaczego nGraph?</h3>
+                <a href="https://arxiv.org/pdf/1801.08058.pdf"><i class="far fa-file-pdf"></i> Intel® nGraph™</a><br>
+                <span class="small">arxiv.org/pdf/1801.08058.pdf</span><br><br>
+                <ul class="loose">
+                    <li class="fragment fade-up">DO w każdym frameworku</li>
+                    <li class="fragment fade-up">Coraz więcej HW</li>
+                    <li class="fragment fade-up">Coraz więcej operacji</li>
+                    <li class="fragment fade-up">Optymalizacje grafu</li>
+                </ul>
+            </section>
+            <section>
+                <h3>nGraph - kompilator</h3>
+                <ul class="loose">
+                    <li class="fragment fade-up">Inspirowany LLVM</li>
+                    <li class="fragment fade-up">Ma własną reprezentację grafu (IR)</li>
+                    <li class="fragment fade-up">IR niezależny or FW i HW</li>
+                    <li class="fragment fade-up accent fira">ngraph::Function</li>
+                </ul>
+            </section>
+            <section>
+                <h3>nGraph - kompilator</h3>
+                <img src="img/nGraphCompilerstack.png" style="width: 75%">
+            </section>
+            <section>
+                <h3>nGraph - etapy kompilacji</h3>
+                <div class="row">
+                    <ul class="small loose">
+                        <li class="fragment fade-up">Wczytanie modelu przez "bridge"</li>
+                        <li class="fragment fade-up">Skonstruowanie <span class="fira">ngraph::Function</span></li>
+                        <li class="fragment fade-up accent">Optymalizacje funkcji/grafu</li>
+                        <li class="fragment fade-up">Transformacja funkcji</li>
+                        <li class="fragment fade-up">Optymalizacje związane z HW</li>
+                        <li class="fragment fade-up">Inferencja</li>
+                    </ul>
+                    <div>&nbsp;&nbsp;&nbsp;</div>
+                    <img src="img/nGraph_diagram.png" style="width: 50%;">
+                </div>
+            </section>
+            <section>
+                <h3>Optymalizacje grafu</h3>
+                <ul class="loose">
+                    <li class="fragment fade-up">Niezależne od sprzętu</li>
+                    <li class="fragment fade-up">Analiza grafu - pattern matching</li>
+                    <li class="fragment fade-up">Zamiana na efektywniejsze rozwiązanie</li>
+                    <li class="fragment fade-up accent">"Function passes"</li>
+                </ul>
+            </section>
+            <section>
+                <h3>Implicit broadcast</h3>
+                <img src="img/implicit_bcast.png">
+            </section>
+            <section>
+                <h3>Constant folding</h3>
+                <img src="img/constant_folding.png">
+            </section>
+            <section>
+                <h3>NOP elimination</h3>
+                <ul class="loose">
+                    <li>Eliminacja <span class="accent">"bezsensownych operacji"</span></li>
+                    <li class="fragment fade-up">Convert&nbsp;&nbsp;&nbsp;<span class="fira"><i>int -> int</i></span></li>
+                    <li class="fragment fade-up">Broadast lub Reshape przy<br><span class="fira"><i>target_shape == input_shape</i></span></li>
+                    <li class="fragment fade-up">Redukcja bez podanej osi</li>
+                </ul>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>Kwantyzacja</h2>
+                <div style="font-size: 2em">$$q(r) = \lfloor r/s \rfloor + z$$</div>
+                <br>
+                <img src="img/kwantyzacja_linie.png" alt="">
+            </section>
+            <section>
+                <h3>Typy vs zakresy</h3>
+                <ul class="loose">
+                    <li><span class="accent">fp32</span> $$1\times10^{-38} \longleftrightarrow 3\times10^{38}$$</li>
+                    <li class="fragment fade-up"><span class="accent">int8</span> $$-128 \longleftrightarrow 127$$</li>
+                    <li class="fragment fade-up"><span class="accent">uint8</span> $$0 \longleftrightarrow 255$$</li>
+                </ul>
+            </section>
+            <section>
+                <h3>Kwantyzacja</h3>
+                <img src="img/kwantyzacja.png" alt="">
+            </section>
+            <section>
+                <h3>Energia i powierzchnia silikonu</h3>
+                <img src="img/data_types_performance.png" alt=""><br>
+                <a href="https://www.intel.ai/flexpoint-numerical-innovation-underlying-intel-nervana-neural-network-processor/" class="small">www.intel.ai/flexpoint-numerical-innovation-underlying-intel-nervana-neural-network-processor/</a>
+            </section>
+            <section>
+                <h3>Kwantyzacja - zalety</h3>
+                <ul class="loose">
+                    <li>Mniej prądu</li>
+                    <li>Mniejszy chip</li>
+                    <li class="fragment fade-up">Mniej pamięci</li>
+                    <li class="fragment fade-up">Mniejszy model po serializacji</li>
+                    <li class="fragment fade-up">Szybciej</li>
+                </ul>
+            </section>
+            <section>
+                <h3>Kwantyzacja - VNNI</h3>
+                <a href="https://www.intel.ai/intel-deep-learning-boost">intel.ai/intel-deep-learning-boost</a>
+                <br><br>
+                <h3 class="fira"><i>AVX512_VNNI</i></h3>
+                <img src="img/xeons.png" style="width: 75%">
+                <h5>Intel Xeon Scalable Processor Gen 2</h5>
+            </section>
+            <section>
+                <h3>fp32 vs int8</h3>
+                <img src="img/quant_perf.png" alt="">
+                <br>
+                <a href="https://medium.com/apache-mxnet/model-quantization-for-production-level-neural-network-inference-f54462ebba05" class="vsmall src">medium.com/apache-mxnet/model-quantization-for-production-level-neural-network-inference-f54462ebba05</a>
+            </section>
+            <section>
+                <h3>fp32 vs int8</h3>
+                <img src="img/quant_accuracy.png" style="width: 80%">
+                <br>
+                <a href="https://medium.com/apache-mxnet/model-quantization-for-production-level-neural-network-inference-f54462ebba05" class="vsmall src">medium.com/apache-mxnet/model-quantization-for-production-level-neural-network-inference-f54462ebba05</a>
+            </section>
+        </section>
+        <section>
+            <!-- <section data-background="img/kuniec.png">
+                &nbsp;
+            </section> -->
+            <section>
+                <br>
+                <img src="img/ngraph.png" style="width: 30%"><br>
+                <h3 class="no-transform">nGraph</h3>
+                <br>
+                <div>
+                    <a href="https://tomdol.github.io/3camp_ngraph/">tomdol.github.io/3camp_ngraph</a><br><br>
+                </div>
+                <div>
+                    <a href="https://github.com/tomdol/3camp_ngraph">github.com/tomdol/3camp_ngraph</a><br><br>
+                </div>
+            </section>
+            <section>
+                <iframe width="800" height="500" src="http://www.youtube.com/embed/C9S0nmNS8bQ"></iframe>
+                <a href="https://www.youtube.com/watch?v=C9S0nmNS8bQ">www.youtube.com/watch?v=C9S0nmNS8bQ</a>
+            </section>
+        </section>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/reveal.min.js" 
+        integrity="sha512-Xu/cezKABTI81MGnaBm64vdiS7XkttHeYGOgr2Mdga0bTplSBGongLq2lhK2HwL79wefKM0u4uTCLD0ha1sRzQ==" 
+        crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/plugin/highlight/highlight.min.js" 
+        integrity="sha512-NA5UCab7xDKQPXGsmIp8iEuId5BAKGPiqHZsZQcBuySfp1n3dZrwBDKpPNL23Db5upay1nULxU14JV1ggFOD2A==" 
+        crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/plugin/math/math.min.js" 
+        integrity="sha512-FUzQmRJDLL111zqJg/vN1YzQFQtZNWfBH2VaOiv30dXRXgaTRn3F/Ibda92klSAVjfz3Q9UqS88R4RF4Ip01fQ==" 
+        crossorigin="anonymous"></script>
+
+<script>
+    Reveal.initialize({
+        controls: false,
+        slideNumber: 'c/t',
+        transition: 'slide',
+        plugins: [ RevealHighlight, RevealMath ]
+    });
+</script>
+</body>
+</html>
