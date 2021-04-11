@@ -129,14 +129,18 @@
                 <h4 class="accent">from a C++ developer's perspective</h4>
                 <pre class="double fragment">
                     <code data-trim data-noescape>
+                        // generates a class of functions
                         template &lt;float A, float B&gt;
                         float linear_function(const float x) 
                         {
                             return A * x + B;
                         }
+                        
+                        float linear_function(const float x) {
+                            return 3.14 * x + 1.618;
+                        }
                     </code>
                 </pre>
-                <span class="fragment">a generator of a certain class of functions</span>
             </section>
             <section>
                 <h3>Deep Learning model</h3>
@@ -144,6 +148,21 @@
                 <div class="fragment">
                     <div class="small">$$f(x) = Gemm(Flatten(GlobalAveragePool(Relu(BatchNormalization(Conv(x))))))$$</div>
                     <img src="img/resnet_function.png" style="width: 18%">
+                </div>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h3>Graphs in Deep Learning</h3>
+                <img src="img/netron_github.png" style="width: 80%;" class="m0">
+                <br>
+                <div class="row spb">
+                    <div>
+                        <a href="https://github.com/lutzroeder/netron" class="fira"><i class="fab fa-github-square"></i> lutzroeder/netron</a>
+                    </div>
+                    <div>
+                        <a href="https://netron.app/" class="fira">https://netron.app</a>
+                    </div>
                 </div>
             </section>
             <section>
@@ -158,69 +177,88 @@
                 <div class="accent medium">$$f(x) = ax + b$$</div>
                 <br>
                 <img src="img/ax_plus_b.png" class="fragment fade-up">
+                <h4 class="fragment accent">computational graphs</h4>
             </section>
             <section>
-                <img src="img/netron.png" style="width: 40%" class="m0">
-                <img src="img/netron_github.png" style="width: 80%;" class="m0">
-                <br>
-                <a href="https://github.com/lutzroeder/netron" class="fira"><i class="fab fa-github-square"></i> lutzroeder/netron</a>
+                <h3>Operators</h3>
+                <div class="row">
+                    <div style="margin-right: 2rem">
+                        <img src="img/operators.png">
+                    </div>
+                    <div>
+                        <ul class="fragment loose">
+                            <li>Convolution, Pooling, TopK, Concat,ReLU, Reshape, ...</li>
+                            <li><a href="https://github.com/onnx/onnx/blob/master/docs/Operators.md">ONNX ops</a> (over 160)</li>
+                            <li>Inputs & outputs - data</li>
+                            <li>Attributes - behavior parametrization</li>
+                            <li>Functions or classes in the code</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <h3>Tensors</h3>
+                <div class="row">
+                    <ul class="loose">
+                        <li class="fragment">N-dimentional data arrays (float, int, int8, int64, ...)</li>
+                        <li class="fragment">Flat, contiguous blocks of allocated memory</li>
+                        <li class="fragment">Shape -  <span class="accent">{1, 3, 224, 224}</span> or <span class="accent">{3, 3}</span></li>
+                        <li class="fragment">Dimensions (static or dynamic)</li>
+                        <li class="fragment">Rank</li>
+                    </ul>
+                </div>
+            </section>
+            <section>
+                <h3>ReduceSum of a 2D tensor</h3>
+                <div class="row">
+                    <img src="img/reduce.png" style="margin-right: 1rem; margin-top: 0;">
+                    <pre>
+                        <code class="loose">const auto data = Tensor({1, 2, 3, 4, 5, 6}, {2, 3});
+// [[1 2 3],
+//  [4 5 6]]
+const auto over_axis_0 = ReduceSum(data, 0);
+// [5, 7, 9]
+const auto over_axis_1 = ReduceSum(data, 1);
+// [6, 15]</code>
+                    </pre>
+                </div>                
             </section>
         </section>
         <section>
             <section>
-                <h3>Grafy w DL</h3>
-                <img src="img/nGraph_diagram.png">
-            </section>
-            <section>
-                <h3>"Obliczenie" funkcji - inferencja</h3>
+                <h3>Inference</h3>
                 <img src="img/netron_github.png" style="width: 90%">
             </section>
             <section>
-                <h3>Implementacja naiwna</h3>
-                <ul class="loose">
-                    <li>implementacja operatorów</li>
-                    <li>sekwencyjne wykonanie operacji</li>
-                    <li class="fragment fade-up">Nie wykorzystuje możliwości HW</li>
-                    <li class="fragment fade-up">Jednostki obliczeniowe (rdzenie)</li>
-                    <li class="fragment fade-up">Wektoryzacja</li>
-                    <li class="fragment fade-up">Data layout</li>
+                <h3><span class="accent">Naïve</span> implementation</h3>
+                <img src="img/topological.png" style="width: 75%">
+                <ul>
+                    <li>Topological sort of the graph</li>
+                    <li class="fragment fade-up">Implementation of the operators</li>
+                    <li class="fragment fade-up">Sequential execution of sorted nodes</li>
+                    <li class="fragment fade-up">Probably wasting a lot of HW potential</li>
+                    <li class="fragment fade-up">Cores not utilized</li>
+                    <li class="fragment fade-up">No vectorization </li>
+                    <li class="fragment fade-up">Not good enough for big, real-life models</li>
                 </ul>
             </section>
             <section>
-                <h3>Kernele</h3>
+                <h3>Kernels</h3>
                 <ul class="loose">
-                    <li>Jedna z podstawowych optymalizacji</li>
-                    <li class="fragment fade-up">Ściśle powiązane ze sprzętem</li>
-                    <li class="fragment fade-up">Architektura & instrukcje</li>
-                    <li class="fragment fade-up">Typ danych, reprezentacja danych, rank</li>
-                    <li class="fragment fade-up">DNNL - Intel CPU & GPU</li>
+                    <li class="fragment fade-up">Highly specialized functions/primitives</li>
+                    <li class="fragment fade-up">Hardware specific</li>
+                    <li class="fragment fade-up">Architecture & available instructions dependent</li>
+                    <li class="fragment fade-up">Data type, data shape (rank)</li>
+                    <li class="fragment fade-up">oneDNN - Intel CPU & GPU</li>
                 </ul>
                 <br><br>
-                <div class="fragment fade-up"><a href="https://github.com/intel/mkl-dnn"><i class="fab fa-github-square"></i> intel/mkl-dnn</a></div>
-            </section>
-            <section>
-                <h3>Direct optimization</h3>
-                <span class="fira">model -> graf -> kernele -> HW</span>
-                <br><br>
-                <div class="row fragment fade-up">
-                    <ul style="align-self: flex-start;">
-                        <li>Apache MXNet</li>
-                        <li>BigDL</li>
-                        <li>Caffe Optimized for Intel Architecture</li>
-                        <li>Chainer</li>
-                        <li>DeepLearning4J</li>
-                        <li class="accent">Intel Nervana nGraph</li>
-                        <li>MATLAB DL Toolbox</li>
-                    </ul>
-                    <ul style="align-self: flex-start;">
-                        <li>Menoh</li>
-                        <li>Microsoft Cognitive Toolkit (CNTK)</li>
-                        <li class="accent">ONNX Runtime</li>
-                        <li class="accent">OpenVINO(TM) toolkit</li>
-                        <li class="accent">PaddlePaddle</li>
-                        <li>PyTorch</li>
-                        <li class="accent">Tensorflow</li>
-                    </ul>
+                <div class="fragment fade-up row spb">
+                    <div>
+                        <a href="https://github.com/oneapi-src/oneDNN"><i class="fab fa-github-square"></i> oneapi-src/oneDNN</a>
+                    </div>
+                    <div>
+                        <a href="https://github.com/openvinotoolkit/openvino/blob/master/inference-engine/src/mkldnn_plugin/nodes/mkldnn_bin_conv_node.cpp">Example: Binary Convolution</a>
+                    </div>
                 </div>
             </section>
         </section>
