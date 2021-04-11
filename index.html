@@ -261,6 +261,17 @@ const auto over_axis_1 = ReduceSum(data, 1);
                     </div>
                 </div>
             </section>
+            <section>
+                <h3>Direct Optimization</h3>
+                <ul class="loose">
+                    <li class="fragment">DL framework + kernels = performance</li>
+                    <li class="fragment"><span class="accent">N</span> frameworks * <span class="accent">M</span> hardware platforms = a lot of work</li>
+                    <li class="fragment">
+                        <span class="accent">K</span> operations <span class="fragment">in each framework</span><span class="fragment"> = even more work</span>
+                    </li>
+                    <li class="fragment">HW independent optimizations?</li>
+                </ul>
+            </section>
         </section>
         <section data-transition="zoom-in">
             <section class="loose">
@@ -268,96 +279,45 @@ const auto over_axis_1 = ReduceSum(data, 1);
                     <img src="img/ngraph.png" style="width: 40%">
                 </div>
                 <div>
-                    <a href="https://www.ngraph.ai">www.ngraph.ai</a><br>
+                    <a href="https://arxiv.org/pdf/1801.08058.pdf"><i class="far fa-file-pdf"></i> Intel® nGraph™</a><br>
                     <a href="https://github.com/NervanaSystems/ngraph"><i class="fab fa-github-square"></i> NervanaSystems/ngraph</a><br>
-                    <a href="https://pypi.org/project/ngraph-core/">pypi.org/project/ngraph-core</a><br>
-                </div>
-                <div class="fragment fade-up" style="letter-spacing: .5rem;">
-                    <hr style="width: 70%">
-                    <a href="https://github.com/openvinotoolkit/openvino" class="white"><i class="fab fa-github-square"></i> openvinotoolkit/openvino</a>
+                    <a href="https://github.com/openvinotoolkit/openvino"><i class="fab fa-github-square"></i> openvinotoolkit/openvino</a><br>
                 </div>
             </section>
             <section>
                 <div><img src="img/ngraph.png" style="width: 25%"></div>
-                <h4>od strony technicznej</h4>
+                <h4>from the technical standpoint</h4>
                 <br>
                 <ul class="loose">
-                    <li class="fragment fade-up">biblioteka</li>
-                    <li class="fragment fade-up"><img src="img/cpp_logo.png" class="li-inline" style="height: 2.5rem"> w środku</li>
-                    <li class="fragment fade-up"><img src="img/python_logo.png" class="li-inline" style="height: 2rem"> API w pythonie</li>
+                    <li class="fragment fade-up">a library</li>
+                    <li class="fragment fade-up"><img src="img/cpp_logo.png" class="li-inline" style="height: 2.5rem"> inside</li>
+                    <li class="fragment fade-up"><img src="img/python_logo.png" class="li-inline" style="height: 2rem"> python API</li>
                 </ul>
             </section>
             <section>
                 <div><img src="img/ngraph.png" style="width: 25%"></div>
-                <h4>funkcjonalnie</h4>
+                <h4>from the functional standpoint</h4>
                 <br>
                 <ul class="loose">
-                    <li class="fragment fade-up">kompilator modeli/grafów</li>
-                    <li class="fragment fade-up">optymalizator</li>
-                    <li class="fragment fade-up">akcelerator <span class="fragment accent">- nawet 45x</span></li>
-                    <li class="fragment fade-up">runtime dla modeli DL</li>
+                    <li class="fragment fade-up">HW independent IR of DL models</li>
+                    <li class="fragment fade-up">graph compiler</li>
+                    <li class="fragment fade-up">an optimizing compiler</li>
+                    <li class="fragment fade-up accent fira">ngraph::Function</li>
                 </ul>
             </section>
             <section>
                 <div class="row"><img src="img/ngraph.png" style="height: 4rem"><span>nGraph</span></div>
                 <img src="img/nGraph_diagram.png">
             </section>
-            <section>
-                <div><img src="img/ngraph.png" style="width: 25%"></div>
-                <ul class="loose">
-                    <li>nGraph nie jest frameworkiem</li>
-                    <li class="fragment fade-up">nie służy do budowania modeli</li>
-                    <li class="fragment fade-up">C++ & python API</li>
-                    <li class="fragment fade-up accent">nGraph - backend / engine</li>
-                </ul>
-            </section>
         </section>
         <section>
             <section>
-                <h3>Dlaczego nGraph?</h3>
-                <a href="https://arxiv.org/pdf/1801.08058.pdf"><i class="far fa-file-pdf"></i> Intel® nGraph™</a><br>
-                <span class="small">arxiv.org/pdf/1801.08058.pdf</span><br><br>
+                <img src="img/ngraph.png" style="height: 5rem">
+                <h2>Graph optimizations</h2>
                 <ul class="loose">
-                    <li class="fragment fade-up">DO w każdym frameworku</li>
-                    <li class="fragment fade-up">Coraz więcej HW</li>
-                    <li class="fragment fade-up">Coraz więcej operacji</li>
-                    <li class="fragment fade-up">Optymalizacje grafu</li>
-                </ul>
-            </section>
-            <section>
-                <h3>nGraph - kompilator</h3>
-                <ul class="loose">
-                    <li class="fragment fade-up">Inspirowany LLVM</li>
-                    <li class="fragment fade-up">Ma własną reprezentację grafu (IR)</li>
-                    <li class="fragment fade-up">IR niezależny or FW i HW</li>
-                    <li class="fragment fade-up accent fira">ngraph::Function</li>
-                </ul>
-            </section>
-            <section>
-                <h3>nGraph - kompilator</h3>
-                <img src="img/nGraphCompilerstack.png" style="width: 75%">
-            </section>
-            <section>
-                <h3>nGraph - etapy kompilacji</h3>
-                <div class="row">
-                    <ul class="small loose">
-                        <li class="fragment fade-up">Wczytanie modelu przez "bridge"</li>
-                        <li class="fragment fade-up">Skonstruowanie <span class="fira">ngraph::Function</span></li>
-                        <li class="fragment fade-up accent">Optymalizacje funkcji/grafu</li>
-                        <li class="fragment fade-up">Transformacja funkcji</li>
-                        <li class="fragment fade-up">Optymalizacje związane z HW</li>
-                        <li class="fragment fade-up">Inferencja</li>
-                    </ul>
-                    <div>&nbsp;&nbsp;&nbsp;</div>
-                    <img src="img/nGraph_diagram.png" style="width: 50%;">
-                </div>
-            </section>
-            <section>
-                <h3>Optymalizacje grafu</h3>
-                <ul class="loose">
-                    <li class="fragment fade-up">Niezależne od sprzętu</li>
-                    <li class="fragment fade-up">Analiza grafu - pattern matching</li>
-                    <li class="fragment fade-up">Zamiana na efektywniejsze rozwiązanie</li>
+                    <li class="fragment fade-up">HW independent</li>
+                    <li class="fragment fade-up">Operate on an <span class="fira accent">ngraph::Function</span></li>
+                    <li class="fragment fade-up">Graph pattern matching & replacement</li>
                     <li class="fragment fade-up accent">"Function passes"</li>
                 </ul>
             </section>
@@ -372,11 +332,16 @@ const auto over_axis_1 = ReduceSum(data, 1);
             <section>
                 <h3>NOP elimination</h3>
                 <ul class="loose">
-                    <li>Eliminacja <span class="accent">"bezsensownych operacji"</span></li>
-                    <li class="fragment fade-up">Convert&nbsp;&nbsp;&nbsp;<span class="fira"><i>int -> int</i></span></li>
-                    <li class="fragment fade-up">Broadast lub Reshape przy<br><span class="fira"><i>target_shape == input_shape</i></span></li>
-                    <li class="fragment fade-up">Redukcja bez podanej osi</li>
+                    <li>Elimination of "useless" nodes</li>
+                    <li class="fragment fade-up">Convert&nbsp;&nbsp;&nbsp;<span class="fira accent"><i>int -> int</i></span></li>
+                    <li class="fragment fade-up">Broadast or Reshape when<br><span class="fira accent"><i>target_shape == input_shape</i></span></li>
+                    <li class="fragment fade-up">Reduction without a given axis</li>
+                    <li class="fragment fade-up">Addition of <span class="accent">zero</span> or multiplication by <span class="accent">one</span></li>
                 </ul>
+                <a href="https://github.com/openvinotoolkit/openvino/blob/master/inference-engine/src/transformations/src/transformations/common_optimizations/common_optimizations.cpp" class="fragment small">common_optimizations.cpp</a>
+            </section>
+            <section>
+                <h3>Building an ngraph::Function</h3>
             </section>
         </section>
         <section>
