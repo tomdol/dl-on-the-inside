@@ -150,6 +150,7 @@
                     <img src="img/resnet_function.png" style="width: 18%">
                 </div>
             </section>
+            <section><h2>Questions?</h2></section>
         </section>
         <section>
             <section>
@@ -223,6 +224,7 @@ const auto over_axis_1 = ReduceSum(data, 1);
                     </pre>
                 </div>                
             </section>
+            <section><h2>Questions?</h2></section>
         </section>
         <section>
             <section>
@@ -272,6 +274,7 @@ const auto over_axis_1 = ReduceSum(data, 1);
                     <li class="fragment">HW independent optimizations?</li>
                 </ul>
             </section>
+            <section><h2>Questions?</h2></section>
         </section>
         <section data-transition="zoom-in">
             <section class="loose">
@@ -340,51 +343,73 @@ const auto over_axis_1 = ReduceSum(data, 1);
                 </ul>
                 <a href="https://github.com/openvinotoolkit/openvino/blob/master/inference-engine/src/transformations/src/transformations/common_optimizations/common_optimizations.cpp" class="fragment small">common_optimizations.cpp</a>
             </section>
+            <section><h2>Questions?</h2></section>
+        </section>
+        <section>
             <section>
-                <h3>Building an ngraph::Function</h3>
+                <h3>ngraph::Function</h3>
+                <img src="img/ngraph-function-class.png" alt="">
+            </section>
+            <section>
+                <h3>ngraph::Node</h3>
+                <img src="img/ngraph-node-hierarchy.png" alt="">
+            </section>
+            <section>
+                <h3>Creating a simple Function</h3>
+                <img src="img/simple-function.png" alt="">
+            </section>
+            <section>
+                <h3>Creating a simple Function</h3>
+                <img src="img/simple-function-code.png" alt="">
+                <br>
+                <a href="https://ideone.com/TJQ1IL" class="fragment">ideone.com/TJQ1IL</a>
             </section>
         </section>
         <section>
             <section>
-                <h2>Kwantyzacja</h2>
+                <img src="img/backup.jpg" title="made at imgflip.com"/>
+                <h4>...or some questions?</h4>
+            </section>
+            <section>
+                <h2>Quantization</h2>
                 <div style="font-size: 2em">$$q(r) = \lfloor r/s \rfloor + z$$</div>
                 <br>
                 <img src="img/kwantyzacja_linie.png" alt="">
             </section>
             <section>
-                <h3>Typy vs zakresy</h3>
+                <h2>#include &lt;limits&gt;</h2>
                 <ul class="loose">
-                    <li><span class="accent">fp32</span> $$1\times10^{-38} \longleftrightarrow 3\times10^{38}$$</li>
-                    <li class="fragment fade-up"><span class="accent">int8</span> $$-128 \longleftrightarrow 127$$</li>
-                    <li class="fragment fade-up"><span class="accent">uint8</span> $$0 \longleftrightarrow 255$$</li>
+                    <li><span class="accent fira">std::numeric_limits&lt;float&gt;</span> $$1\times10^{-38} \longleftrightarrow 3\times10^{38}$$</li>
+                    <li class="fragment fade-up"><span class="accent fira">std::numeric_limits&lt;int8_t&gt;</span> $$-128 \longleftrightarrow 127$$</li>
+                    <li class="fragment fade-up"><span class="accent fira">std::numeric_limits&lt;uint8_t&gt;</span> $$0 \longleftrightarrow 255$$</li>
                 </ul>
             </section>
             <section>
-                <h3>Kwantyzacja</h3>
+                <h3>Quantization</h3>
+                <div style="font-size: 1em; margin-bottom: 1em;">$$q(r) = \lfloor r/s \rfloor + z$$</div>
                 <img src="img/kwantyzacja.png" alt="">
             </section>
             <section>
-                <h3>Energia i powierzchnia silikonu</h3>
+                <h3><span class="accent">Joules</span> and <span class="accent">m<sup>2</sup></span> per operation</h3>
                 <img src="img/data_types_performance.png" alt=""><br>
-                <a href="https://www.intel.ai/flexpoint-numerical-innovation-underlying-intel-nervana-neural-network-processor/" class="small">www.intel.ai/flexpoint-numerical-innovation-underlying-intel-nervana-neural-network-processor/</a>
             </section>
             <section>
-                <h3>Kwantyzacja - zalety</h3>
+                <h3>Benefits</h3>
                 <ul class="loose">
-                    <li>Mniej prądu</li>
-                    <li>Mniejszy chip</li>
-                    <li class="fragment fade-up">Mniej pamięci</li>
-                    <li class="fragment fade-up">Mniejszy model po serializacji</li>
-                    <li class="fragment fade-up">Szybciej</li>
+                    <li>Less power (edge devices)</li>
+                    <li class="fragment fade-up">Smaller chip</li>
+                    <li class="fragment fade-up">Better cache utilization</li>
+                    <li class="fragment fade-up">Smaller weights == smaller model</li>
+                    <li class="fragment fade-up">Performance</li>
                 </ul>
             </section>
             <section>
-                <h3>Kwantyzacja - VNNI</h3>
-                <a href="https://www.intel.ai/intel-deep-learning-boost">intel.ai/intel-deep-learning-boost</a>
-                <br><br>
-                <h3 class="fira"><i>AVX512_VNNI</i></h3>
+                <h3>HW support - VNNI</h3>
+                <a class="small" href="https://www.intel.ai/intel-deep-learning-boost">intel.ai/intel-deep-learning-boost</a><br>
+                <a class="small" href="https://www.intel.com/content/www/us/en/architecture-and-technology/avx-512-animation.html">avx-512-animation.html</a><br>
+                <a class="small" href="https://www.intel.com/content/www/us/en/artificial-intelligence/posts/lowering-numerical-precision-increase-deep-learning-performance.html">lowering-numerical-precision-increase-deep-learning-performance.html</a><br><br>
+                <h4 class="fira"><i>AVX512_VNNI</i></h4>
                 <img src="img/xeons.png" style="width: 75%">
-                <h5>Intel Xeon Scalable Processor Gen 2</h5>
             </section>
             <section>
                 <h3>fp32 vs int8</h3>
@@ -393,7 +418,7 @@ const auto over_axis_1 = ReduceSum(data, 1);
                 <a href="https://medium.com/apache-mxnet/model-quantization-for-production-level-neural-network-inference-f54462ebba05" class="vsmall src">medium.com/apache-mxnet/model-quantization-for-production-level-neural-network-inference-f54462ebba05</a>
             </section>
             <section>
-                <h3>fp32 vs int8</h3>
+                <h3>What about accuracy?</h3>
                 <img src="img/quant_accuracy.png" style="width: 80%">
                 <br>
                 <a href="https://medium.com/apache-mxnet/model-quantization-for-production-level-neural-network-inference-f54462ebba05" class="vsmall src">medium.com/apache-mxnet/model-quantization-for-production-level-neural-network-inference-f54462ebba05</a>
@@ -406,18 +431,30 @@ const auto over_axis_1 = ReduceSum(data, 1);
             <section>
                 <br>
                 <img src="img/ngraph.png" style="width: 30%"><br>
-                <h3 class="no-transform">nGraph</h3>
+                <h3 style="margin-bottom: .5rem !important; letter-spacing: .25rem;">DEEP LEARNING</h3>
+                <hr style="width: 50%">
+                <h4 style="letter-spacing: .7rem;">on the inside</h4>
                 <br>
                 <div>
-                    <a href="https://tomdol.github.io/3camp_ngraph/">tomdol.github.io/3camp_ngraph</a><br><br>
-                </div>
-                <div>
-                    <a href="https://github.com/tomdol/3camp_ngraph">github.com/tomdol/3camp_ngraph</a><br><br>
+                    <a href="https://tomdol.github.io/dl_on_the_inside/">tomdol.github.io/dl_on_the_inside</a>
                 </div>
             </section>
             <section>
                 <iframe width="800" height="500" src="http://www.youtube.com/embed/C9S0nmNS8bQ"></iframe>
                 <a href="https://www.youtube.com/watch?v=C9S0nmNS8bQ">www.youtube.com/watch?v=C9S0nmNS8bQ</a>
+            </section>
+            <section>
+                <h3>Materials</h3>
+                <ul class="small loose">
+                    <li><a href="https://docs.openvinotoolkit.org/latest/index.html">docs.openvinotoolkit.org/latest/index.html</a></li>
+                    <li><a href="https://docs.openvinotoolkit.org/latest/omz_models_public_index.html">docs.openvinotoolkit.org/latest/omz_models_public_index.html</a></li>
+                    <li><a href="https://docs.openvinotoolkit.org/latest/omz_demos.html">docs.openvinotoolkit.org/latest/omz_demos.html</a></li>
+                    <li><a href="https://github.com/openvinotoolkit/openvino">github.com/openvinotoolkit/openvino</a></li>
+                    <li><a href="https://github.com/openvinotoolkit/model_server">github.com/openvinotoolkit/model_server</a></li>
+                    <li><a href="https://onnx.ai/">onnx.ai</a></li>
+                    <li><a href="https://github.com/onnx/models">github.com/onnx/models</a></li>
+                    <li><a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi">3Blue1Brown - neural nets</a></li>
+                    <li><a href="https://www.coursera.org/specializations/deep-learning">coursera.org/specializations/deep-learning</a></li>
             </section>
         </section>
     </div>
